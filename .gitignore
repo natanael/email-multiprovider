@@ -1,1 +1,7 @@
 yarn-error.log
+.env
+dist/
+node_modules/
+redis-data/
+scripts/
+spikes/
