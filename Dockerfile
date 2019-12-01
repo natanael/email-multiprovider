@@ -12,6 +12,10 @@ COPY package.json .
 
 COPY yarn.lock .
 
+COPY .env .
+
+RUN source .env
+
 RUN yarn install
 
 COPY pm2.json .

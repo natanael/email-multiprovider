@@ -6,7 +6,8 @@ export function getRedisClient(): redis.RedisClient {
   if (client && client.connected) {
     return client;
   }
-  client = redis.createClient(Number(process.env.REDIS_PORT || 6379), process.env.REDIS_HOST);
+  console.log('Redis', Number(process.env.REDIS_PORT || 6379), process.env.REDIS_HOST)
+  client = redis.createClient({host: 'redis'});
   return client;
 }
 
