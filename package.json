@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc src/ --outDir dist",
+    "build": "tsc src/*.ts src/**/*.ts --outDir dist",
     "start:prod:server": "node dist/server.js",
     "start:server": "ts-node -r dotenv/config src/server.ts",
     "start:worker": "ts-node -r dotenv/config src/scheduler.ts",
