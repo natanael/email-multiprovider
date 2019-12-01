@@ -29,7 +29,7 @@ export function getHttpRequestFromEmailRequest(request: EmailRequest): [https.Re
 export async function send(request: EmailRequest): Promise<string> {
   const [options, requestData] = getHttpRequestFromEmailRequest(request);
 
-  console.log('USING MAILGUN');
+  console.log('TRYING MAILGUN');
   return new Promise((resolve, reject) => {
     const req = https.request(options, (res) => {
       console.log(`statusCode: ${res.statusCode}`)

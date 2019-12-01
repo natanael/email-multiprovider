@@ -13,7 +13,7 @@ app.use('/email', sendEmails());
 
 app.get('/', (req, res) => {
   res.set('Content-Type', 'text/plain');
-  res.send(`curl http://address/email -X POST --data '{
+  res.send(`curl http://address/email -X POST -H 'Content-Type: json' --data '{
     "from": "me@example.com", 
     "to": ["you@example.com"], 
     "cc": ["them@example.com"], 

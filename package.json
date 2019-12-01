@@ -6,11 +6,10 @@
   "scripts": {
     "build": "tsc src/*.ts src/**/*.ts --outDir dist",
     "start:prod:server": "node dist/server.js",
-    "start:server": "ts-node -r dotenv/config src/server.ts",
-    "start:worker": "ts-node -r dotenv/config src/scheduler.ts",
+    "start:server": "cross-env REDIS_HOST=localhost ts-node -r dotenv/config src/server.ts",
+    "start:worker": "cross-env REDIS_HOST=localhost ts-node -r dotenv/config src/scheduler.ts",
     "test:watch": "mocha --watch --watch-extensions ts --colors --exit --timeout 15000 -r ts-node/register \"src/**/*.spec.ts\"",
     "test": "mocha --colors --exit --timeout 15000 -r ts-node/register \"src/**/*.spec.ts\"",
-
     "db:init": "ts-node -r dotenv/config spikes/initializeDatabase.ts",
     "db": "ts-node -r dotenv/config spikes/dbSpike.ts",
     "mailGun": "ts-node -r dotenv/config spikes/mailGun.ts",
@@ -32,6 +31,7 @@
     "@types/redis": "^2.8.14",
     "@types/uuid": "^3.4.6",
     "chai": "^4.2.0",
+    "cross-env": "^6.0.3",
     "mocha": "^6.2.2",
     "nodemon": "^2.0.1",
     "ts-node": "^8.5.2",

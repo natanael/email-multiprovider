@@ -74,9 +74,9 @@ export function isNumber(notNumber: string): ValidatorFunction<string> {
   }
 }
 
-export function isUuid(notNumber: string): ValidatorFunction<string> {
+export function isUuid(notUuid: string): ValidatorFunction<string> {
   return (val: string) => {
-    if (!val || !val.match(/[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}/)) { return notNumber; }
+    if (!val || !val.match(/[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}/)) { return notUuid; }
     return;
   }
 }

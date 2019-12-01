@@ -1,6 +1,6 @@
 import * as express from 'express';
 import { isEmail, emailArray, optionalEmailArray, isNonEmptyString, optional, getErrors, requiredUuid } from '../validators/validators';
-import { Email } from './email';
+import { Email, EEmailStatus } from './email';
 import { getRedisClient } from '../redis';
 
 export const sendEmails = (): express.Router => {
@@ -63,6 +63,7 @@ export const sendEmails = (): express.Router => {
     }
 
     // Create email
+    console.log('Queueing new email', params);
     Email.createEmail(getRedisClient, {
       from: params.from,
       to: params.to,
@@ -73,9 +74,10 @@ export const sendEmails = (): express.Router => {
       ...(params.html ? { html: params.html } : {}),
     })
     .then(email => {
+      console.log('Queued email', email.id);
       res.status(303);
       res.set('location', '/email?id=' + email.id);
-      res.json({status: 'SUCCESS', id: email.id});
+      res.json({status: EEmailStatus.ToDo, id: email.id, message: `Use GET /email?id=${email.id} to get the status of the email request (Location header)`});
     })
     .catch(err => {
       console.error('Failed to register email', err);
