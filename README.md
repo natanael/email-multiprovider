@@ -3,12 +3,12 @@ This is a NodeJS API the uses both `mailgun` and `sendgrid` API's to send emails
 It is just a proof of concept with mere hours into it, so many edges are still rough
 How it works:
 - Validate the POST /email request
-- Store the `emailRequest` on redis with a TTL of 60 sec
+- Store the `emailRequest` on redis
 - Return the link to check the status of the request `GET /email?id=uuid`
 - A worker runs every second and will send the emails either by `mailgun` or `sendgrid`.
 > It shuffles and tries all unless one works
 > The sendgrid implementation is set to fail randomly 50% of the time
-- After the TTL your email will be forgotten forever
+- After processing the your email is given a TTL of 60 seconds and after that it will be forgotten forever
 >  (well, the logs still reference it, and the recipients will have it)
 
 # Running locally
