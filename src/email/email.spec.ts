@@ -28,6 +28,27 @@ describe('email', () => {
       ))
       .returns(() => true)
       .verifiable(TypeMoq.Times.once());
+      
+      client
+      .setup(s => s.set(
+        TypeMoq.It.is(likeUuid),
+        TypeMoq.It.is(val => {
+          expect(JSON.parse(val).status).to.be.equal(EEmailStatus.ToDo, 'Email is not set to ToDo after it is created');
+          const serialized = JSON.parse(val);
+          expect(serialized.from).to.be.equal(request.from, 'Email creation - set - from');
+          expect(serialized.to).to.be.eql(request.to, 'Email creation - set - to');
+          expect(serialized.subject).to.be.equal(request.subject, 'Email creation - set - subject');
+          expect(serialized.text).to.be.equal(request.text, 'Email creation - set - text');
+          return true;
+        }), 
+        TypeMoq.It.is(val => {val(null, 'OK'); return isFunction(val)}),
+      ))
+      .returns(() => true)
+      .verifiable(TypeMoq.Times.once());
+
+      client
+      .setup(s => s.expire(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()))
+      .verifiable(TypeMoq.Times.never());
   
       email = await Email.createEmail(() => client.object, request);
       client.verifyAll();
@@ -36,9 +57,8 @@ describe('email', () => {
 
     it('should update the email to processing with the provider while processing', async () => {
       client
-      .setup(s => s.setex(
+      .setup(s => s.set(
         TypeMoq.It.is(likeUuid),
-        Number(process.env.EMAIL_TTL_SECONDS),
         TypeMoq.It.is(val => {
           expect(JSON.parse(val).status).to.be.equal(EEmailStatus.Processing, 'Email is not set to Processing when processing');
           expect(val).to.be.equal(JSON.stringify({
@@ -48,10 +68,14 @@ describe('email', () => {
           }), 'Processing Email does not match expectations');
           return true;
         }), 
-        TypeMoq.It.is(val => {val(null, 'uuid'); return isFunction(val)}),
+        TypeMoq.It.is(val => {val(null, 'OK'); return isFunction(val)}),
       ))
       .returns(() => true)
       .verifiable(TypeMoq.Times.once());
+
+      client
+      .setup(s => s.expire(TypeMoq.It.isAny(), TypeMoq.It.isAny(), TypeMoq.It.isAny()))
+      .verifiable(TypeMoq.Times.never());
   
       await email.processing(EProvider.Mailgun);
       client.verifyAll();
@@ -60,9 +84,8 @@ describe('email', () => {
 
     it('should update the email to sent after it is sent', async () => {
       client
-      .setup(s => s.setex(
+      .setup(s => s.set(
         TypeMoq.It.is(likeUuid),
-        Number(process.env.EMAIL_TTL_SECONDS),
         TypeMoq.It.is(val => {
           expect(JSON.parse(val).status).to.be.equal(EEmailStatus.Sent, 'Email is not set to Sent after it is sent');
           expect(JSON.parse(val).provider).to.be.equal(EProvider.SendGrid, 'The provider is not updated as it should');
@@ -73,7 +96,16 @@ describe('email', () => {
           }), 'Sent Email does not match expectations');
           return true;
         }), 
-        TypeMoq.It.is(val => {val(null, 'uuid'); return isFunction(val)}),
+        TypeMoq.It.is(val => {val(null, 'OK'); return isFunction(val)}),
+      ))
+      .returns(() => true)
+      .verifiable(TypeMoq.Times.once());
+
+      client
+      .setup(s => s.expire(
+        TypeMoq.It.is(likeUuid),
+        TypeMoq.It.is(val => val === Number(process.env.EMAIL_TTL_SECONDS)), 
+        TypeMoq.It.is(val => {val(null, 1); return isFunction(val)}),
       ))
       .returns(() => true)
       .verifiable(TypeMoq.Times.once());
@@ -85,9 +117,8 @@ describe('email', () => {
     
     it('should update the email to failed after it fails', async () => {
       client
-      .setup(s => s.setex(
+      .setup(s => s.set(
         TypeMoq.It.is(likeUuid),
-        Number(process.env.EMAIL_TTL_SECONDS),
         TypeMoq.It.is(val => {
           expect(JSON.parse(val).status).to.be.equal(EEmailStatus.Failed, 'Email is not set to Failed after it fails');
           expect(JSON.parse(val).provider).to.be.equal(EProvider.Mailgun, 'The provider is not updated as it should');
@@ -98,7 +129,16 @@ describe('email', () => {
           }), 'Sent Email does not match expectations');
           return true;
         }), 
-        TypeMoq.It.is(val => {val(null, 'uuid'); return isFunction(val)}),
+        TypeMoq.It.is(val => {val(null, 'OK'); return isFunction(val)}),
+      ))
+      .returns(() => true)
+      .verifiable(TypeMoq.Times.once());
+
+      client
+      .setup(s => s.expire(
+        TypeMoq.It.is(likeUuid),
+        TypeMoq.It.is(val => val === Number(process.env.EMAIL_TTL_SECONDS)), 
+        TypeMoq.It.is(val => {val(null, 1); return isFunction(val)}),
       ))
       .returns(() => true)
       .verifiable(TypeMoq.Times.once());

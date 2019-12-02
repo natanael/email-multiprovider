@@ -63,17 +63,22 @@ export class Email {
     return promisify<number | null>(callback => this.client().hset("emails", this.id, this.email.createTimestamp.toString(), callback));
   }
   public store(): Promise<string | null> {
-    return promisify<string | null>(callback => this.client().setex(this.id, Number(process.env.EMAIL_TTL_SECONDS), JSON.stringify(this.email), callback));
+    return promisify<string | null>(callback => this.client().set(this.id, JSON.stringify(this.email), callback));
+  }
+  public expire() {
+    return promisify<number | null>(callback => this.client().expire(this.id, Number(process.env.EMAIL_TTL_SECONDS), callback));
   }
   public sent(provider: EProvider) {
     this.email.status = EEmailStatus.Sent;
     this.email.provider = provider;
     this.store();
+    this.expire();
   }
   public failed(provider: EProvider) {
     this.email.status = EEmailStatus.Failed;
     this.email.provider = provider;
     this.store();
+    this.expire();
   }
   public processing(provider: EProvider) {
     this.email.status = EEmailStatus.Processing;
