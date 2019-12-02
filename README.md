@@ -36,16 +36,18 @@ curl http://localhost:8080/email -X POST -H 'Content-Type: application/json' --d
 ```
 
 # Todo
-1. More programmatic error responses
+- More programmatic error responses
 > This was designed to help someone read the error output and infer what to fix, but it does not help someone who is trying to update an UI with those messages.
 > A simple standard in terms of 'REQUIRED', 'MUST_BE_ARRAY', 'INVALID_EMAIL', 'EMPTY_STRING' (e.g [{field: 'subject', error: 'EMPTY_STRING'}])
-1. Monitoring
+- A proper concurrency control for multiple workers
+> There is nothing there, no partitioning, no app lock, we can only have one worker per db or we risk sendind the same email twice
+- Monitoring
 > I can watch the logs, but it won't send me an email if it goes down, ironically
-1. Test coverage report
+- Test coverage report
 > No coverage report was implemented..
-1. 100% test coverage
+- 100% test coverage
 > .. but I'm still sure we don't cover 100%
-1. CI / CD
+- CI / CD
 > Would put something in CircleCI, but had no time
-1. Rolling update
+- Rolling update
 > Could use `docker swarm` for that but also had no time
